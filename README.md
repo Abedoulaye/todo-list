@@ -83,7 +83,7 @@ Buttons: Uppercase, letter-spaced, semi-bold
 Clone the repository
 
 bash
-git clone <your-repository-url>
+git clone <https://abedoulaye.github.io/todo-list/>
 cd todo-list
 Open in browser
 
