@@ -9,6 +9,8 @@
   --text-muted: #a0a0b0;
 }
 
+/* Josh Cameu's CSS Reset from the Odin Project */
+
 /* 1. Use a more-intuitive box-sizing model */
 *, *::before, *::after {
   box-sizing: border-box;
