@@ -13,18 +13,6 @@ const descriptionInput = document.getElementById("description-input");
 const taskData = JSON.parse(localStorage.getItem("data")) || [];
 let currentTask = {};
 
-/* input values shouldn't retain their values so we make this function, alongside with 
-toggling classList("hidden") and resetting currentTask whenver new tasks are made */
-
-function reset(){
-  addOrUpdateTaskBtn.innerText = "Add Task"
-  titleInput.value = "";
-  dateInput.value = "";
-  descriptionInput.value = "";
-  taskForm.classList.toggle("hidden");
-  currentTask = {};
-
-}
 
 const updateTaskContainer = () => {
   tasksContainer.innerHTML = "";
@@ -52,6 +40,52 @@ openTaskFormBtn.addEventListener("click", ()=>{
     taskForm.classList.toggle("hidden")
 })
 
+/* input values shouldn't retain their values so we make this function, alongside with 
+toggling classList("hidden") and resetting currentTask whenver new tasks are made */
+
+function reset(){
+  addOrUpdateTaskBtn.innerText = "Add Task"
+  titleInput.value = "";
+  dateInput.value = "";
+  descriptionInput.value = "";
+  taskForm.classList.toggle("hidden");
+  currentTask = {};
+
+}
+
+
+function editTask(buttonEl) {
+    const dataArrIndex = taskData.findIndex(
+    (item) => item.id === buttonEl.parentElement.id
+  );
+
+  currentTask = taskData[dataArrIndex];
+
+  titleInput.value = currentTask.title;
+  dateInput.value = currentTask.date;
+  descriptionInput.value = currentTask.description;
+
+  addOrUpdateTaskBtn.innerText = "Update Task";
+
+  taskForm.classList.toggle("hidden");  
+}
+
+
+function deleteTask(buttonEl) {
+  const dataArrIndex = taskData.findIndex(
+    (item) => item.id === buttonEl.parentElement.id
+  );
+
+  buttonEl.parentElement.remove();
+  taskData.splice(dataArrIndex, 1);
+
+  /* splice already does the work so there is no need in localStorage.removeItem()
+  all that is needed is to save taskData to local Storage oncmeore*/
+  
+  localStorage.setItem("data", JSON.stringify(taskData))
+}
+
+
 closeTaskFormBtn.addEventListener("click", ()=>{
     if (titleInput.value || dateInput.value || descriptionInput.value){
         confirmCloseDialog.showModal()
@@ -62,8 +96,10 @@ closeTaskFormBtn.addEventListener("click", ()=>{
 })
 
 discardBtn.addEventListener("click", ()=>{
-    confirmCloseDialog.close()
-    reset()
+    if (confirm("Are you sure? This is Permanant")){
+        confirmCloseDialog.close()
+        reset()
+    }
 })
 
 function removeSpecialCharacters(input) {
@@ -72,6 +108,11 @@ function removeSpecialCharacters(input) {
 
 taskForm.addEventListener("submit", (e)=>{
     e.preventDefault()
+
+    if (!titleInput.value.trim()){
+        alert("To-do's cannot be only spaces")
+        return
+    }
     const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id)
 
     const taskObject = {
@@ -93,37 +134,4 @@ taskForm.addEventListener("submit", (e)=>{
     reset()
 })
 
-function deleteTask(buttonEl) {
-  const dataArrIndex = taskData.findIndex(
-    (item) => item.id === buttonEl.parentElement.id
-  );
 
-  buttonEl.parentElement.remove();
-  taskData.splice(dataArrIndex, 1);
-
-  /* splice already does the work so there is no need in localStorage.removeItem()
-  all that is needed is to save taskData to local Storage oncmeore*/
-  
-  localStorage.setItem("data", JSON.stringify(taskData))
-}
-
-
-
-function editTask(buttonEl) {
-    if (!titleInput.value.trim()){
-        alert("To-do's cannot be only spaces")
-    }
-    const dataArrIndex = taskData.findIndex(
-    (item) => item.id === buttonEl.parentElement.id
-  );
-
-  currentTask = taskData[dataArrIndex];
-
-  titleInput.value = currentTask.title;
-  dateInput.value = currentTask.date;
-  descriptionInput.value = currentTask.description;
-
-  addOrUpdateTaskBtn.innerText = "Update Task";
-
-  taskForm.classList.toggle("hidden");  
-}
